@@ -46,7 +46,9 @@ _.each(airQuality, function (param) {
 
 var server = express();
 server.get('/*', function (req, res) {
-    var url = "http://aqicn.org/city/paris/route-nationale-2-pantin";
+
+    var url = "http://aqicn.org/city/paris/";
+
     request(url, function (err, result, html) {
         if (err) {
             res.sendStatus(500);
@@ -57,6 +59,7 @@ server.get('/*', function (req, res) {
             try {
                 var data = $('.aqivalue');
                 data = parseInt(data.html());
+                console.log('data : ', data);
                 var color = colorArray[data];
                 res.status(200).json({
                     value: data,
@@ -64,7 +67,8 @@ server.get('/*', function (req, res) {
                 })
             }
             catch (e) {
-                res.sendStatus(500)
+                res.sendStatus(500);
+                return console.log(e);
             }
         }
     });
