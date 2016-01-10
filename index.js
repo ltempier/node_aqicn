@@ -46,9 +46,7 @@ _.each(airQuality, function (param) {
 
 var server = express();
 server.get('/*', function (req, res) {
-
     var url = "http://aqicn.org/city/paris/";
-
     request(url, function (err, result, html) {
         if (err) {
             res.sendStatus(500);
@@ -59,10 +57,11 @@ server.get('/*', function (req, res) {
             try {
                 var data = $('.aqivalue');
                 data = parseInt(data.html());
-                console.log('data : ', data);
+
                 var color = colorArray[data];
                 res.status(200).json({
-                    value: data,
+                    level: getAirQuality(data).title,
+                    aqi: data,
                     color: color.toRgb()
                 })
             }
@@ -73,5 +72,11 @@ server.get('/*', function (req, res) {
         }
     });
 });
+
+function getAirQuality(aqi) {
+    return _.find(airQuality, function (quality) {
+            return aqi >= quality.range[0] && aqi < quality.range[1]
+        }) || {}
+}
 
 server.listen(process.env.PORT || 1111);
